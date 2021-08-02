@@ -69,8 +69,15 @@
 
             var structureUrl = getParam('structure-url', '[^&]+').trim();
             var structureUrlFormat = getParam('structure-url-format', '[a-z]+').toLowerCase().trim();
+            console.log(structureUrlFormat);
             var structureUrlIsBinary = getParam('structure-url-is-binary', '[^&]+').trim() === '1';
-            if (structureUrl) viewer.loadStructureFromUrl(structureUrl, structureUrlFormat, structureUrlIsBinary);
+            if (structureUrl) {
+                viewer.loadStructureFromUrl(structureUrl, structureUrlFormat, structureUrlIsBinary);
+                for (const s of viewer.plugin.managers.structure.hierarchy.current.structures) {
+                    viewer.plugin.managers.structure.component.updateRepresentationsTheme(s.components, { color: OccupancyColorThemeProvider });
+                    console.log(s.components);
+                    }
+            }
 
             var pdb = getParam('pdb', '[^&]+').trim();
             if (pdb) viewer.loadPdb(pdb);

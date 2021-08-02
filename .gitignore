@@ -9,5 +9,5 @@ tsconfig.commonjs.tsbuildinfo
 
 *.sublime-workspace
 .idea
-
-.DS_Store
+*.pdb
+package-lock.json

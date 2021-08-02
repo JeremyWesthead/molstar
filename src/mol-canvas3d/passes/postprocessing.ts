@@ -239,7 +239,7 @@ function getPostprocessingRenderable(ctx: WebGLContext, colorTexture: Texture, d
 }
 
 export const PostprocessingParams = {
-    occlusion: PD.MappedStatic('on', {
+    occlusion: PD.MappedStatic('off', { // Default to occlusion off
         on: PD.Group({
             samples: PD.Numeric(32, {min: 1, max: 256, step: 1}),
             radius: PD.Numeric(5, { min: 0, max: 10, step: 0.1 }, { description: 'Final radius is 2^x.' }),
@@ -250,7 +250,7 @@ export const PostprocessingParams = {
     }, { cycle: true, description: 'Darken occluded crevices with the ambient occlusion effect' }),
     outline: PD.MappedStatic('off', {
         on: PD.Group({
-            scale: PD.Numeric(1, { min: 1, max: 5, step: 1 }),
+            scale: PD.Numeric(2, { min: 1, max: 5, step: 1 }),
             threshold: PD.Numeric(0.33, { min: 0.01, max: 1, step: 0.01 }),
         }),
         off: PD.Group({})

@@ -41,7 +41,17 @@ namespace StateObject {
             label: string;
             description?: string;
             constructor(public data: Data, props?: { label: string, description?: string }) {
-                this.label = props && props.label || type.name;
+                // Before assigning a label, check if it conatains (and appropriately truncate) a URL
+                let label: string;
+                if (props && props.label){
+                    label = props.label;
+                } else{
+                    label = type.name;
+                }
+                if (label.includes('/')){
+                    label = label.split('/').pop() as string;
+                }
+                this.label = label;
                 this.description = props && props.description;
             }
         };

@@ -336,6 +336,10 @@ class StructureComponentGroup extends PurePluginUIComponent<{ group: StructureCo
         const cell = component.cell;
         const label = cell.obj?.label;
         const reprLabel = this.reprLabel;
+        if (label === 'Carbohydrate'){
+            // If this is control is for the carbohydrate row, toggle it hidden by default
+            this.plugin.managers.structure.component.toggleVisibility(this.props.group);
+        }
         return <>
             <div className='msp-flex-row'>
                 <Button noOverflow className='msp-control-button-label' title={`${label}. Click to focus.`} onClick={this.focus} onMouseEnter={this.highlight} onMouseLeave={this.clearHighlight} style={{ textAlign: 'left' }}>
