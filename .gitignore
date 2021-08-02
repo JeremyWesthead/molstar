@@ -11,3 +11,5 @@ tsconfig.commonjs.tsbuildinfo
 .idea
 *.pdb
 package-lock.json
+*.pkl.gz
+__pycache__
