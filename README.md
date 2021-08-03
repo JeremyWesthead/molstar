@@ -7,7 +7,7 @@ Defaults to hiding carbohydrates, colouring by an occupancy field within a PDB f
 git clone git@github.com:JeremyWesthead/molstar-mutation.git
 cd molstar-mutation
 npm install
-npm build
+npm run build
 ```
 
 ## Documentation
