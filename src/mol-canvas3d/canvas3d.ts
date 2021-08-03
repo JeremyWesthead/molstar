@@ -41,7 +41,7 @@ import { shallowEqual } from '../mol-util';
 
 export const Canvas3DParams = {
     camera: PD.Group({
-        mode: PD.Select('perspective', PD.arrayToOptions(['perspective', 'orthographic'] as const), { label: 'Camera' }),
+        mode: PD.Select('orthographic', PD.arrayToOptions(['perspective', 'orthographic'] as const), { label: 'Camera' }),
         helper: PD.Group(CameraHelperParams, { isFlat: true }),
         stereo: PD.MappedStatic('off', {
             on: PD.Group(StereoCameraParams),

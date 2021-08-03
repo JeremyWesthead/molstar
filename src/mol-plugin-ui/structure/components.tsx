@@ -333,7 +333,7 @@ class StructureComponentGroup extends PurePluginUIComponent<{ group: StructureCo
 
     render() {
         const component = this.pivot;
-        const cell = component.cell;
+        const cell = component.cell; 
         const label = cell.obj?.label;
         const reprLabel = this.reprLabel;
         if (label === 'Carbohydrate'){

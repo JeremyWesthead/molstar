@@ -15,7 +15,7 @@ import { PluginContext } from '../../../mol-plugin/context';
 import { StateObjectRef, StateObjectSelector } from '../../../mol-state';
 import { StaticStructureComponentType } from '../../helpers/structure-component';
 import { StructureSelectionQueries as Q } from '../../helpers/structure-selection-query';
-import { PluginConfig } from '../../../mol-plugin/config';
+// import { PluginConfig } from '../../../mol-plugin/config';
 import { StructureFocusRepresentation } from '../../../mol-plugin/behavior/dynamic/selection/structure-focus-representation';
 import { createStructureColorThemeParams } from '../../helpers/structure-representation-params';
 import { ChainIdColorThemeProvider } from '../../../mol-theme/color/chain-id';
@@ -23,7 +23,7 @@ import { OperatorNameColorThemeProvider } from '../../../mol-theme/color/operato
 import { IndexPairBonds } from '../../../mol-model-formats/structure/property/bonds/index-pair';
 import { StructConn } from '../../../mol-model-formats/structure/property/bonds/struct_conn';
 import { StructureRepresentationRegistry } from '../../../mol-repr/structure/registry';
-import { assertUnreachable } from '../../../mol-util/type-helpers';
+// import { assertUnreachable } from '../../../mol-util/type-helpers';
 
 export interface StructureRepresentationPresetProvider<P = any, S extends _Result = _Result> extends PresetProvider<PluginStateObject.Molecule.Structure, P, S> { }
 export function StructureRepresentationPresetProvider<P, S extends _Result>(repr: StructureRepresentationPresetProvider<P, S>) { return repr; }
@@ -108,27 +108,11 @@ const auto = StructureRepresentationPresetProvider({
     apply(ref, params, plugin) {
         const structure = StateObjectRef.resolveAndCheck(plugin.state.data, ref)?.obj?.data;
         if (!structure) return { };
-
-        const thresholds = plugin.config.get(PluginConfig.Structure.SizeThresholds) || Structure.DefaultSizeThresholds;
-        const size = Structure.getSize(structure, thresholds);
-
-        const gapFraction = structure.polymerResidueCount / structure.polymerGapCount;
-
-        switch (size) {
-            case Structure.Size.Gigantic:
-            case Structure.Size.Huge:
-                return coarseSurface.apply(ref, params, plugin);
-            case Structure.Size.Large:
-                return polymerCartoon.apply(ref, params, plugin);
-            case Structure.Size.Medium:
-                if (gapFraction > 3) {
-                    return polymerAndLigand.apply(ref, params, plugin);
-                } // else fall through
-            case Structure.Size.Small:
-                // `showCarbohydrateSymbol: true` is nice, e.g., for PDB 1aga
-                return atomicDetail.apply(ref, { ...params, showCarbohydrateSymbol: true }, plugin);
-            default:
-                assertUnreachable(size);
+        
+        if (plugin.is_reference === true){
+            return polymerAndLigand.apply(ref, params, plugin);
+        } else{
+            return mutation.apply(ref, params, plugin);
         }
     }
 });
@@ -162,7 +146,8 @@ const polymerAndLigand = StructureRepresentationPresetProvider({
             water: await presetStaticComponent(plugin, structureCell, 'water'),
             ion: await presetStaticComponent(plugin, structureCell, 'ion'),
             lipid: await presetStaticComponent(plugin, structureCell, 'lipid'),
-            coarse: await presetStaticComponent(plugin, structureCell, 'coarse')
+            coarse: await presetStaticComponent(plugin, structureCell, 'coarse'),
+            // all: await presetStaticComponent(plugin, structureCell, 'all')
         };
 
         const structure = structureCell.obj!.data;
@@ -185,7 +170,8 @@ const polymerAndLigand = StructureRepresentationPresetProvider({
             water: builder.buildRepresentation(update, components.water, { type: waterType, typeParams: { ...typeParams, alpha: 0.6 }, color, colorParams: { carbonColor: { name: 'element-symbol', params: {} } } }, { tag: 'water' }),
             ion: builder.buildRepresentation(update, components.ion, { type: 'ball-and-stick', typeParams, color, colorParams: { carbonColor: { name: 'element-symbol', params: {} } } }, { tag: 'ion' }),
             lipid: builder.buildRepresentation(update, components.lipid, { type: lipidType, typeParams: { ...typeParams, alpha: 0.6 }, color, colorParams: { carbonColor: { name: 'element-symbol', params: {} } } }, { tag: 'lipid' }),
-            coarse: builder.buildRepresentation(update, components.coarse, { type: 'spacefill', typeParams, color: color || 'chain-id' }, { tag: 'coarse' })
+            coarse: builder.buildRepresentation(update, components.coarse, { type: 'spacefill', typeParams, color: color || 'chain-id' }, { tag: 'coarse' }),
+            // polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy'}, {tag: 'polymer_mutations'})
         };
 
         await update.commit({ revertOnError: false });
@@ -194,6 +180,45 @@ const polymerAndLigand = StructureRepresentationPresetProvider({
         return { components, representations };
     }
 });
+const mutation = StructureRepresentationPresetProvider({
+    id: 'preset-structure-representation-mutation',
+    display: {
+        name: 'Mutation', group: BuiltInPresetGroupName,
+        description: 'Shows blobs for amino acids which have mutations (the occupancy field has been set in the pdb file).'
+    },
+    params: () => CommonParams,
+    async apply(ref, params, plugin) {
+        const structureCell = StateObjectRef.resolveAndCheck(plugin.state.data, ref);
+        if (!structureCell) return {};
+
+        const components = {
+            polymer: await presetStaticComponent(plugin, structureCell, 'polymer'),
+            branched: await presetStaticComponent(plugin, structureCell, 'branched', { label: 'Carbohydrate' }),
+        };
+
+        const structure = structureCell.obj!.data;
+        const cartoonProps = {
+            sizeFactor: structure.isCoarseGrained ? 0.8 : 0.2,
+        };
+
+        const { update, builder, typeParams, color, symmetryColor, ballAndStickColor } = reprBuilder(plugin, params, structure);
+        // Pass to a dummy function to force compilation without warnings due to unused variables
+        use(cartoonProps);
+        use(symmetryColor);
+        use(color);
+        use(ballAndStickColor);
+        const representations = {
+            polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy'}, {tag: 'polymer-mutations'}),
+            branched_mutations: builder.buildRepresentation(update, components.branched, { type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy' }, { tag: 'branched-mutations' }),
+        };
+
+        await update.commit({ revertOnError: false });
+        await updateFocusRepr(plugin, structure, params.theme?.focus?.name, params.theme?.focus?.params);
+
+        return { components, representations };
+    }
+});
+function use(item: any) { }
 
 const proteinAndNucleic = StructureRepresentationPresetProvider({
     id: 'preset-structure-representation-protein-and-nucleic',

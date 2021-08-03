@@ -133,6 +133,7 @@ export class PluginContext {
         data: new DataBuilder(this),
         structure: void 0 as any as StructureBuilder
     };
+    is_reference: boolean = false;
 
     build() {
         return this.state.data.build();
