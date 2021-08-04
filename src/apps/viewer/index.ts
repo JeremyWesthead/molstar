@@ -112,7 +112,7 @@ export class Viewer {
                     regionState: {
                         bottom: 'full',
                         left: o.collapseLeftPanel ? 'collapsed' : 'full',
-                        right: 'full',
+                        right: 'hidden',
                         top: 'full',
                     }
                 },

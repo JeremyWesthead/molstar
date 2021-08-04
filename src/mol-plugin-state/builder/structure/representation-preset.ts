@@ -165,8 +165,8 @@ const polymerAndLigand = StructureRepresentationPresetProvider({
             polymer: builder.buildRepresentation(update, components.polymer, { type: 'cartoon', typeParams: { ...typeParams, ...cartoonProps }, color: symmetryColor }, { tag: 'polymer' }),
             ligand: builder.buildRepresentation(update, components.ligand, { type: 'ball-and-stick', typeParams, color, colorParams: ballAndStickColor }, { tag: 'ligand' }),
             nonStandard: builder.buildRepresentation(update, components.nonStandard, { type: 'ball-and-stick', typeParams, color, colorParams: ballAndStickColor }, { tag: 'non-standard' }),
-            branchedBallAndStick: builder.buildRepresentation(update, components.branched, { type: 'ball-and-stick', typeParams: { ...typeParams, alpha: 0.3 }, color, colorParams: ballAndStickColor }, { tag: 'branched-ball-and-stick' }),
-            branchedSnfg3d: builder.buildRepresentation(update, components.branched, { type: 'carbohydrate', typeParams, color }, { tag: 'branched-snfg-3d' }),
+            // branchedBallAndStick: builder.buildRepresentation(update, components.branched, { type: 'ball-and-stick', typeParams: { ...typeParams, alpha: 0.3 }, color, colorParams: ballAndStickColor }, { tag: 'branched-ball-and-stick' }),
+            // branchedSnfg3d: builder.buildRepresentation(update, components.branched, { type: 'carbohydrate', typeParams, color }, { tag: 'branched-snfg-3d' }),
             water: builder.buildRepresentation(update, components.water, { type: waterType, typeParams: { ...typeParams, alpha: 0.6 }, color, colorParams: { carbonColor: { name: 'element-symbol', params: {} } } }, { tag: 'water' }),
             ion: builder.buildRepresentation(update, components.ion, { type: 'ball-and-stick', typeParams, color, colorParams: { carbonColor: { name: 'element-symbol', params: {} } } }, { tag: 'ion' }),
             lipid: builder.buildRepresentation(update, components.lipid, { type: lipidType, typeParams: { ...typeParams, alpha: 0.6 }, color, colorParams: { carbonColor: { name: 'element-symbol', params: {} } } }, { tag: 'lipid' }),
@@ -193,7 +193,7 @@ const mutation = StructureRepresentationPresetProvider({
 
         const components = {
             polymer: await presetStaticComponent(plugin, structureCell, 'polymer'),
-            branched: await presetStaticComponent(plugin, structureCell, 'branched', { label: 'Carbohydrate' }),
+            // branched: await presetStaticComponent(plugin, structureCell, 'branched', { label: 'Carbohydrate' }),
         };
 
         const structure = structureCell.obj!.data;
@@ -209,7 +209,7 @@ const mutation = StructureRepresentationPresetProvider({
         use(ballAndStickColor);
         const representations = {
             polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy'}, {tag: 'polymer-mutations'}),
-            branched_mutations: builder.buildRepresentation(update, components.branched, { type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy' }, { tag: 'branched-mutations' }),
+            // branched_mutations: builder.buildRepresentation(update, components.branched, { type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy' }, { tag: 'branched-mutations' }),
         };
 
         await update.commit({ revertOnError: false });

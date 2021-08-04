@@ -11,7 +11,7 @@ import { PluginConfig } from '../mol-plugin/config';
 import { ParamDefinition as PD } from '../mol-util/param-definition';
 import { PluginUIComponent } from './base';
 import { ControlGroup, IconButton } from './controls/common';
-import { AutorenewSvg, BuildOutlinedSvg, CameraOutlinedSvg, CloseSvg, FullscreenSvg, TuneSvg } from './controls/icons';
+import { AutorenewSvg, CameraOutlinedSvg, CloseSvg, FullscreenSvg, TuneSvg } from './controls/icons';
 import { ToggleSelectionModeButton } from './structure/selection';
 import { ViewportCanvas } from './viewport/canvas';
 import { DownloadScreenshotControls } from './viewport/screenshot';
@@ -94,7 +94,7 @@ export class ViewportControls extends PluginUIComponent<ViewportControlsProps, V
                 </div>
                 <div>
                     <div className='msp-semi-transparent-background' />
-                    {this.plugin.config.get(PluginConfig.Viewport.ShowControls) && this.icon(BuildOutlinedSvg, this.toggleControls, 'Toggle Controls Panel', this.plugin.layout.state.showControls)}
+                    {/* {this.plugin.config.get(PluginConfig.Viewport.ShowControls) && this.icon(BuildOutlinedSvg, this.toggleControls, 'Toggle Controls Panel', this.plugin.layout.state.showControls)} */}
                     {this.plugin.config.get(PluginConfig.Viewport.ShowExpand) && this.icon(FullscreenSvg, this.toggleExpanded, 'Toggle Expanded Viewport', this.plugin.layout.state.isExpanded)}
                     {this.plugin.config.get(PluginConfig.Viewport.ShowSettings) && this.icon(TuneSvg, this.toggleSettingsExpanded, 'Settings / Controls Info', this.state.isSettingsExpanded)}
                 </div>
