@@ -134,6 +134,7 @@ export class PluginContext {
         structure: void 0 as any as StructureBuilder
     };
     is_reference: boolean = false;
+    is_comparison: boolean = false;
 
     build() {
         return this.state.data.build();

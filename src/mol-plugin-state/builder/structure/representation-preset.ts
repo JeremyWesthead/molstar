@@ -112,7 +112,11 @@ const auto = StructureRepresentationPresetProvider({
         if (plugin.is_reference === true){
             return polymerAndLigand.apply(ref, params, plugin);
         } else{
-            return mutation.apply(ref, params, plugin);
+            if (plugin.is_comparison === true){
+                return mutation_compare.apply(ref, params, plugin);
+            } else{
+                return mutation.apply(ref, params, plugin);
+            }
         }
     }
 });
@@ -209,6 +213,44 @@ const mutation = StructureRepresentationPresetProvider({
         use(ballAndStickColor);
         const representations = {
             polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy'}, {tag: 'polymer-mutations'}),
+            // branched_mutations: builder.buildRepresentation(update, components.branched, { type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy' }, { tag: 'branched-mutations' }),
+        };
+
+        await update.commit({ revertOnError: false });
+        await updateFocusRepr(plugin, structure, params.theme?.focus?.name, params.theme?.focus?.params);
+
+        return { components, representations };
+    }
+});
+const mutation_compare = StructureRepresentationPresetProvider({
+    id: 'preset-structure-representation-mutation-compare',
+    display: {
+        name: 'Mutation', group: BuiltInPresetGroupName,
+        description: 'Shows blobs for amino acids which have mutations (the occupancy field has been set in the pdb file). With a comparison colour theme'
+    },
+    params: () => CommonParams,
+    async apply(ref, params, plugin) {
+        const structureCell = StateObjectRef.resolveAndCheck(plugin.state.data, ref);
+        if (!structureCell) return {};
+
+        const components = {
+            polymer: await presetStaticComponent(plugin, structureCell, 'polymer'),
+            // branched: await presetStaticComponent(plugin, structureCell, 'branched', { label: 'Carbohydrate' }),
+        };
+
+        const structure = structureCell.obj!.data;
+        const cartoonProps = {
+            sizeFactor: structure.isCoarseGrained ? 0.8 : 0.2,
+        };
+
+        const { update, builder, typeParams, color, symmetryColor, ballAndStickColor } = reprBuilder(plugin, params, structure);
+        // Pass to a dummy function to force compilation without warnings due to unused variables
+        use(cartoonProps);
+        use(symmetryColor);
+        use(color);
+        use(ballAndStickColor);
+        const representations = {
+            polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy-compare'}, {tag: 'polymer-mutations'}),
             // branched_mutations: builder.buildRepresentation(update, components.branched, { type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy' }, { tag: 'branched-mutations' }),
         };
 

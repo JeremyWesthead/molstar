@@ -30,6 +30,7 @@ import { IllustrativeColorThemeProvider } from './color/illustrative';
 import { HydrophobicityColorThemeProvider } from './color/hydrophobicity';
 import { ModelIndexColorThemeProvider } from './color/model-index';
 import { OccupancyColorThemeProvider } from './color/occupancy';
+import { OccupancyCompareColorThemeProvider } from './color/occupancy-compare';
 import { OperatorNameColorThemeProvider } from './color/operator-name';
 import { OperatorHklColorThemeProvider } from './color/operator-hkl';
 import { PartialChargeColorThemeProvider } from './color/partial-charge';
@@ -108,6 +109,7 @@ namespace ColorTheme {
         'model-index': ModelIndexColorThemeProvider,
         'molecule-type': MoleculeTypeColorThemeProvider,
         'occupancy': OccupancyColorThemeProvider,
+        'occupancy-compare': OccupancyCompareColorThemeProvider,
         'operator-hkl': OperatorHklColorThemeProvider,
         'operator-name': OperatorNameColorThemeProvider,
         'partial-charge': PartialChargeColorThemeProvider,
