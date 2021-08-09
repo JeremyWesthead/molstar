@@ -135,6 +135,7 @@ export class PluginContext {
     };
     is_reference: boolean = false;
     is_comparison: boolean = false;
+    colour: string = '';
 
     build() {
         return this.state.data.build();

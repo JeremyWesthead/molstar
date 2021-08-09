@@ -37,6 +37,9 @@ import { PartialChargeColorThemeProvider } from './color/partial-charge';
 import { AtomIdColorThemeProvider } from './color/atom-id';
 import { EntityIdColorThemeProvider } from './color/entity-id';
 import { TextureFilter } from '../mol-gl/webgl/texture';
+import { OccupancyRedColorThemeProvider } from './color/occupancy_red';
+import { OccupancyGreenColorThemeProvider } from './color/occupancy_green';
+import { OccupancyBlueColorThemeProvider } from './color/occupancy_blue';
 
 export type LocationColor = (location: Location, isSecondary: boolean) => Color
 
@@ -109,6 +112,9 @@ namespace ColorTheme {
         'model-index': ModelIndexColorThemeProvider,
         'molecule-type': MoleculeTypeColorThemeProvider,
         'occupancy': OccupancyColorThemeProvider,
+        'occupancy-red': OccupancyRedColorThemeProvider,
+        'occupancy-green': OccupancyGreenColorThemeProvider,
+        'occupancy-blue': OccupancyBlueColorThemeProvider,
         'occupancy-compare': OccupancyCompareColorThemeProvider,
         'operator-hkl': OperatorHklColorThemeProvider,
         'operator-name': OperatorNameColorThemeProvider,

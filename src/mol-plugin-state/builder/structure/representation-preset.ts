@@ -211,8 +211,16 @@ const mutation = StructureRepresentationPresetProvider({
         use(symmetryColor);
         use(color);
         use(ballAndStickColor);
+
+        let colorTheme: ColorTheme.BuiltIn;
+        if (plugin.colour === 'default'){
+            colorTheme = 'occupancy' as ColorTheme.BuiltIn;
+        }
+        else{
+            colorTheme = 'occupancy-'+plugin.colour as ColorTheme.BuiltIn;
+        }
         const representations = {
-            polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy'}, {tag: 'polymer-mutations'}),
+            polymer_mutations: builder.buildRepresentation(update, components.polymer, {type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: colorTheme}, {tag: 'polymer-mutations'}),
             // branched_mutations: builder.buildRepresentation(update, components.branched, { type: 'spacefill', typeParams: {...typeParams, sizeFactor: 0.75}, color: 'occupancy' }, { tag: 'branched-mutations' }),
         };
 
