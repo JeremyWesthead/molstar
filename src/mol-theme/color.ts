@@ -40,6 +40,7 @@ import { TextureFilter } from '../mol-gl/webgl/texture';
 import { OccupancyRedColorThemeProvider } from './color/occupancy_red';
 import { OccupancyGreenColorThemeProvider } from './color/occupancy_green';
 import { OccupancyBlueColorThemeProvider } from './color/occupancy_blue';
+import { OccupancyDefaultColorThemeProvider } from './color/occupancy-default';
 
 export type LocationColor = (location: Location, isSecondary: boolean) => Color
 
@@ -115,6 +116,7 @@ namespace ColorTheme {
         'occupancy-red': OccupancyRedColorThemeProvider,
         'occupancy-green': OccupancyGreenColorThemeProvider,
         'occupancy-blue': OccupancyBlueColorThemeProvider,
+        'occupancy-default': OccupancyDefaultColorThemeProvider,
         'occupancy-compare': OccupancyCompareColorThemeProvider,
         'operator-hkl': OperatorHklColorThemeProvider,
         'operator-name': OperatorNameColorThemeProvider,
