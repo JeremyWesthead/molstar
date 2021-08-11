@@ -33,7 +33,7 @@
  export function getColour(unit: Unit, element: ElementIndex): number {
      if (Unit.isAtomic(unit)) {
          const occupancy = unit.model.atomicConformation.occupancy.value(element);
-         const hexStr = padHex((Math.min(Math.round(occupancy)*2, 1)*255).toString(16)) + "00" + padHex(Math.round((-4*occupancy*occupancy + 4*occupancy)*255).toString(16));
+         const hexStr = padHex(Math.round(Math.min(occupancy*2, 1)*255).toString(16)) + "00" + padHex(Math.round((-4*occupancy*occupancy + 4*occupancy)*255).toString(16));
          return parseInt(hexStr, 16);
  
      } else {
