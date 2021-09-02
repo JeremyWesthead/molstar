@@ -9,11 +9,18 @@ import { Unit, StructureElement, StructureProperties as Props, Bond } from '../m
 import { Loci } from '../mol-model/loci';
 import { OrderedSet } from '../mol-data/int';
 import { capitalize, stripTags } from '../mol-util/string';
-import { Column } from '../mol-data/db';
 import { Vec3 } from '../mol-math/linear-algebra';
 import { radToDeg } from '../mol-math/misc';
 import { Volume } from '../mol-model/volume';
-
+declare global {
+    /*
+    Allow access to window.is_comparison to change labels for comparisons.
+    This means that we can display the occupancy values from the inverse cantor pairing function.
+    */
+    interface Window {
+        is_comparison: boolean;
+    }
+}
 export type LabelGranularity = 'element' | 'conformation' | 'residue' | 'chain' | 'structure'
 
 export const DefaultLabelOptions = {
@@ -232,14 +239,9 @@ function _elementLabel(location: StructureElement.Location, granularity: LabelGr
 }
 
 function _atomicElementLabel(location: StructureElement.Location<Unit.Atomic>, granularity: LabelGranularity, hideOccupancy = false): string[] {
-    const rI = StructureElement.Location.residueIndex(location);
-
     const label_asym_id = Props.chain.label_asym_id(location);
     const auth_asym_id = Props.chain.auth_asym_id(location);
-    const has_label_seq_id = location.unit.model.atomicHierarchy.residues.label_seq_id.valueKind(rI) === Column.ValueKind.Present;
-    const label_seq_id = Props.residue.label_seq_id(location);
     const auth_seq_id = Props.residue.auth_seq_id(location);
-    const ins_code = Props.residue.pdbx_PDB_ins_code(location);
     const comp_id = Props.atom.label_comp_id(location);
     const atom_id = Props.atom.label_atom_id(location);
     const alt_id = Props.atom.label_alt_id(location);
@@ -259,8 +261,7 @@ function _atomicElementLabel(location: StructureElement.Location<Unit.Atomic>, g
                 label.push(`<small>Conformation</small> <b>${alt_id}</b>`);
             }
         case 'residue':
-            const seq_id = label_seq_id === auth_seq_id || !has_label_seq_id ? auth_seq_id : label_seq_id;
-            label.push(`<b>${compId} ${seq_id}</b>${seq_id !== auth_seq_id ? ` <small>[auth</small> <b>${auth_seq_id}</b><small>]</small>` : ''}<b>${ins_code ? ins_code : ''}</b>`);
+            label.push(`<b>${compId} ${auth_seq_id}</b><script>if(document.getElementById('mutations-table-${auth_seq_id}') !== undefined){console.log(this);}</script>`);
         case 'chain':
             if (label_asym_id === auth_asym_id) {
                 label.push(`<b>${label_asym_id}</b>`);
@@ -273,8 +274,19 @@ function _atomicElementLabel(location: StructureElement.Location<Unit.Atomic>, g
             }
     }
 
-    if (label.length > 0 && occupancy !== 1 && !hideOccupancy) {
-        label[0] = `${label[0]} <small>[occupancy</small> <b>${Math.round(100 * occupancy) / 100}</b><small>]</small>`;
+    if (label.length > 0 && !hideOccupancy) {
+        if (window.is_comparison){
+            // Convert the occupancy to the constituent parts using the inverse cantor function
+            const occ = occupancy * 100; //Adjust value back to be a natural number
+            const w = Math.floor(((8 * occ + 1)**0.5 - 1) / 2);
+            const t = w * (w + 1) / 2;
+            const x = Math.max(Math.round(w - occ + t)/10, 0);
+            const y = Math.max(Math.round(occ - t)/10, 0);
+            label[0] = `${label[0]} <small>[Approx. relative mutations</small> <b>(${x},${y})</b><small>]</small>`;
+        }
+        else{
+            label[0] = `${label[0]} <small>[Relative mutation</small> <b>${Math.round(100 * occupancy) / 100}</b><small>]</small>`;
+        }
     }
 
     return label.reverse();

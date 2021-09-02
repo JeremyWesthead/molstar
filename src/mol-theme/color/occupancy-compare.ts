@@ -40,8 +40,9 @@
          // Inverse cantor function
          const w = Math.floor(((8 * occupancy + 1)**0.5 - 1) / 2)
          const t = w * (w + 1) / 2
-         const x = Math.round(w - occupancy + t)
-         const y = Math.round(occupancy - t);
+         //Ensure values are positive
+         const x = Math.max(Math.round(w - occupancy + t), 0);
+         const y = Math.max(Math.round(occupancy - t), 0);
          // Convert to a single hex string. Values are mutliplied by 25 as this is equavalent of (x/10)*255
          // Dividing by 10 is required to convert to decimals back from the natural numbers required for cantor pairing
          // Uses rgb(mutation1, 0, mutation2) to provide colours
