@@ -1,106 +1,53 @@
-# Change Log
-All notable changes to this project will be documented in this file, following the suggestions of [Keep a CHANGELOG](http://keepachangelog.com/). This project adheres to [Semantic Versioning](http://semver.org/) for its most widely used - and defacto - public interfaces.
+# Changes to adapt to mutation viewing
+There were a few changes which needed to be made to the defaults. These included custom colour themes, changes to showing panels and camera angles.
 
-Note that since we don't clearly distinguish between a public and private interfaces there will be changes in non-major versions that are potentially breaking. If we make breaking changes to less used interfaces we will highlight it in here.
+## Main changes by file
 
-
-## [Unreleased]
-
-- Add surronding atoms (5 Angstrom) structure selection query
-- [Breaking] Add maxDistance prop to ``IndexPairBonds``
-- Fix coordinateSystem not handled in ``Structure.asParent``
-- Add dynamicBonds to ``Structure`` props (force re-calc on model change)
-    - Expose as optional param in root structure transform helper
-- Add overpaint support to geometry exporters
-
-## [v2.2.0] - 2021-07-31
-
-- Add ``tubularHelices`` parameter to Cartoon representation
-- Add ``SdfFormat`` and update SDF parser to be able to parse data headers according to spec (hopefully :)) #230
-- Fix mononucleotides detected as polymer components (#229)
-- Set default outline scale back to 1
-- Improved DCD reader cell angle handling (interpret near 0 angles as 90 deg)
-- Handle more residue/atom names commonly used in force-fields
-- Add USDZ support to ``geo-export`` extension.
-- Fix ``includeParent`` support for multi-instance bond visuals.
-- Add ``operator`` Loci granularity, selecting everything with the same operator name.
-- Prefer ``_label_seq_id`` fields in secondary structure assignment.
-- Support new EMDB API (https://www.ebi.ac.uk/emdb/api/entry/map/[EMBD-ID]) for EM volume contour levels.
-- ``Canvas3D`` tweaks:
-    - Update ``forceDraw`` logic.
-    - Ensure the scene is re-rendered when viewport size changes.
-    - Support ``noDraw`` mode in ``PluginAnimationLoop``.
-
-## [v2.1.0] - 2021-07-05
-
-- Add parameter for to display aromatic bonds as dashes next to solid cylinder/line.
-- Add backbone representation
-- Fix outline in orthographic mode and set default scale to 2.
-
-## [v2.0.7] - 2021-06-23
-
-- Add ability to specify ``volumeIndex`` in ``Viewer.loadVolumeFromUrl`` to better support Volume Server inputs.
-- Support in-place reordering for trajectory ``Frame.x/y/z`` arrays for better memory efficiency.
-- Fixed text CIF encoder edge cases (most notably single whitespace not being escaped).
-
-## [v2.0.6] - 2021-06-01
-
-- Add glTF (GLB) and STL support to ``geo-export`` extension.
-- Protein crosslink improvements
-    - Change O-S bond distance to allow for NOS bridges (doi:10.1038/s41586-021-03513-3)
-    - Added NOS-bridges query & improved disulfide-bridges query
-- Fix #178: ``IndexPairBonds`` for non-single residue structures (bug due to atom reordering).
-- Add volumetric color smoothing for MolecularSurface and GaussianSurface representations (#173)
-- Fix nested 3d grid lookup that caused results being overwritten in non-covalent interactions computation.
-- Basic implementation of ``BestDatabaseSequenceMapping`` (parse from CIF, color theme, superposition).
-- Add atom id ranges support to Selection UI.
-
-## [v2.0.5] - 2021-04-26
-
-- Ability to pass ``Canvas3DContext`` to ``PluginContext.fromCanvas``.
-- Relative frame support for ``Canvas3D`` viewport.
-- Fix bug in screenshot copy UI.
-- Add ability to select residues from a list of identifiers to the Selection UI.
-- Fix SSAO bugs when used with ``Canvas3D`` viewport.
-- Support for  full pausing (no draw) rendering: ``Canvas3D.pause(true)``.
-- Add ``MeshBuilder.addMesh``.
-- Add ``Torus`` primitive.
-- Lazy volume loading support.
-- [Breaking] ``Viewer.loadVolumeFromUrl`` signature change.
-    - ``loadVolumeFromUrl(url, format, isBinary, isovalues, entryId)`` => ``loadVolumeFromUrl({ url, format, isBinary }, isovalues, { entryId, isLazy })``
-- Add ``TextureMesh`` support to ``geo-export`` extension.
-
-## [v2.0.4] - 2021-04-20
-
-- [WIP] Mesh export extension
-- ``Structure.eachAtomicHierarchyElement`` (#161)
-- Fixed reading multi-line values in SDF format
-- Fixed Measurements UI labels (#166)
-
-## [v2.0.3] - 2021-04-09
-### Added
-- Support for ``ColorTheme.palette`` designed for providing gradient-like coloring.
-
-### Changed
-- [Breaking] The ``zip`` function is now asynchronous and expects a ``RuntimeContext``. Also added ``Zip()`` returning a ``Task``.
-- [Breaking] Add ``CubeGridFormat`` in ``alpha-orbitals`` extension.
-
-## [v2.0.2] - 2021-03-29
-### Added
-- ``Canvas3D.getRenderObjects``.
-- [WIP] Animate state interpolating, including model trajectories
-
-### Changed
-- Recognise MSE, SEP, TPO, PTR and PCA as non-standard amino-acids.
-
-### Fixed
-- VolumeFromDensityServerCif transform label
-
-
-## [v2.0.1] - 2021-03-23
-### Fixed
-- Exclude tsconfig.commonjs.tsbuildinfo from npm bundle
-
-
-## [v2.0.0] - 2021-03-23
-Too many changes to list as this is the start of the changelog... Notably, default exports are now forbidden.
+### src/mol-canvas-3d/passes/postprocessing.ts
+Turn off occlusion by default
+### src/mol-plugin-ui/structure/components.tsx
+Hide carbohydrates by default
+### src/apps/viewer/index.ts
+Hide the right panel
+### src/mol-plugin-ui/viewport.tsx
+Hide the left panel
+### src/mol-repr/structure/representation/cartoon.ts
+Default cartoon representation to colour by occupancy
+### src/mol-state/object.ts
+When giving an object a label, check for (and appropriately truncate) a URL name.
+### src/mol-canvas3d/canvas3d.ts
+Default camera to use othographic rather than perspective
+### src/mol-plugin-state/builder/structure/representation-preset.ts
+Added custom representation presets for mutations and comparisons.
+#### `auto` preset
+Changed to automatically select mutation/comparison presets according to flags which can be set in the `viewer.plugin`
+#### `mutation` preset
+Preset used to provide a spacefill representation of mutations, coloured according to the value of the occupancy field for each residue, and a colour scheme, named by a variable in `viewer.plugin`.
+#### `mutation_compare` preset
+Preset used to provide a spacefill representation of mutations, using the inverse cantor pairing function on the occupancy values to determine colour within a 2D gradient.
+### src/mol-theme/color/occupancy-compare.ts
+Custom theme which applies the inverse cantor pairing function to the occupancy value, and utilises these values to change the R and B values within the RGB values for colouring each residue. This results in a 2D gradient:
+* (0,0) -> rgb(0,0,0)
+* (1,0) -> rgb(250,0,0)
+* (0,1) -> rgb(0,0,250)
+* (1,1) -> rgb(250,0,250)
+Set if `viewer.plugin.is_comparison === true`
+### src/mol-theme/color/occupancy.ts
+Custom theme which utilises the occupancy value to produce a gradient of colour as the occupancy increases:
+* 0.00 -> rgb(0,0,0)
+* 0.50 -> rgb(255,0,255)
+* 1.00 -> rgb(255, 0, 0)
+Set if `viewer.plugin.colour === 'default'`
+### src/mol-theme/color/occupancy_red.ts
+Custom theme which utilises the occupancy value to produce a gradient of black->red as occupancy 0->1
+Set if `viewer.plugin.colour === 'red'`
+### src/mol-theme/color/occupancy_green.ts
+Custom theme which utilises the occupancy value to produce a gradient of black->green as occupancy 0->1
+Set if `viewer.plugin.colour === 'blue'`
+### src/mol-theme/color/occupancy_blue.ts
+Custom theme which utilises the occupancy value to produce a gradient of black->blue as occupancy 0->1
+Set if `viewer.plugin.colour === 'green'`
+### src/mol-theme/color.ts
+Added custom colour themes to be valid colour themes.
+### src/mol-theme/label.ts
+Changes the onhover label for each residue to describe relative mutation rather than occupancy. Also allows use of a global toggle (`window.is_comparison`) to change the label to show both relative mutation values of a comparison by applying the inverse cantor pairing function to the occupancy. Also removes some less helpful label features to make it easier to understand.

@@ -11,7 +11,7 @@ npm run build
 ```
 
 ## Documentation
-A full README for Mol* can be found in the `molstar-README.md` file.
+A full README for Mol* can be found in the `molstar-README.md` file. An example of how this can be used can be found through a project to visualise mutations within COVID-19's spike protein ([here](https://github.com/JeremyWesthead/Protein-Mutation-Viewer "here")), and an in-depth changelog between this project and its parent project can be found in `CHANGELOG.md`
 ### Viewer
 To create a viewer to view mutations within a protein:
 1. Create a PDB file for the desired protein which has occupancy field values of `0` for all ATOM values. This is the `reference protein`
