@@ -31,21 +31,26 @@ Custom theme which applies the inverse cantor pairing function to the occupancy 
 * (1,0) -> rgb(250,0,0)
 * (0,1) -> rgb(0,0,250)
 * (1,1) -> rgb(250,0,250)
+
 Set if `viewer.plugin.is_comparison === true`
 ### src/mol-theme/color/occupancy.ts
 Custom theme which utilises the occupancy value to produce a gradient of colour as the occupancy increases:
 * 0.00 -> rgb(0,0,0)
 * 0.50 -> rgb(255,0,255)
 * 1.00 -> rgb(255, 0, 0)
+
 Set if `viewer.plugin.colour === 'default'`
 ### src/mol-theme/color/occupancy_red.ts
 Custom theme which utilises the occupancy value to produce a gradient of black->red as occupancy 0->1
+
 Set if `viewer.plugin.colour === 'red'`
 ### src/mol-theme/color/occupancy_green.ts
 Custom theme which utilises the occupancy value to produce a gradient of black->green as occupancy 0->1
+
 Set if `viewer.plugin.colour === 'blue'`
 ### src/mol-theme/color/occupancy_blue.ts
 Custom theme which utilises the occupancy value to produce a gradient of black->blue as occupancy 0->1
+
 Set if `viewer.plugin.colour === 'green'`
 ### src/mol-theme/color.ts
 Added custom colour themes to be valid colour themes.
